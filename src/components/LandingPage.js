@@ -8,8 +8,7 @@ import ImageGallery from "./ImageGallery";
 import heroimage from '../interior images/herosection.jpg';
 import modernimage from '../interior images/modernminimilistic.jpg';
 import profilepic from '../interior images/pp.jpg';
-import card from '../interior images/card.jpg';
-
+import card from '../interior images/space edge visiting card.png';
 const LandingPage = () => {
     const [showGallery, setShowGallery] = useState(false);
 
