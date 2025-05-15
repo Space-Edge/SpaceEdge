@@ -23,7 +23,7 @@ const LandingPage = () => {
                     rel="noopener noreferrer"
                     className="bg-black text-white px-4 py-2.5 rounded-lg font-semibold fixed top-1 right-6 z-50"
                 >
-                    Get In Touch
+                    Get a quote
                 </a>
             </nav>
 
