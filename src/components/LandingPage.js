@@ -36,6 +36,15 @@ const LandingPage = () => {
                 <FaWhatsapp size={32} />
             </a>
 
+              <a
+                href="https://www.instagram.com/space_edge_interiors" // Replace with your actual Instagram profile link
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fixed right-4 top-2/3 transform -translate-y-1/2 bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 flex items-center gap-2"
+            >
+                <FaInstagram size={32} />
+            </a>
+
             {/* Hero Section or Image Gallery */}
             {showGallery ? (
                 <div className="relative">
