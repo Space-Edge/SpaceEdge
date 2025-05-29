@@ -27,21 +27,23 @@ const LandingPage = () => {
                 </a>
             </nav>
 <a
-    href="https://www.instagram.com/space_edge_interiors"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="fixed right-4 top-[45%] md:top-[55%] transform -translate-y-1/2 bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 flex items-center gap-2"
+  href="https://www.instagram.com/space_edge_interiors"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed right-4 top-[46%] md:top-[48%] transform -translate-y-1/2 bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 flex items-center gap-2"
 >
-    <FaInstagram size={32} />
+  <FaInstagram size={32} />
 </a>
-            <a
-                href="https://wa.me/919767787898"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="fixed right-4 top-3/4 transform -translate-y-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg z-50 hover:bg-green-600 flex items-center gap-2"
-            >
-                <FaWhatsapp size={32} />
-            </a>
+
+<a
+  href="https://wa.me/919767787898"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed right-4 top-[52%] md:top-[54%] transform -translate-y-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg z-50 hover:bg-green-600 flex items-center gap-2"
+>
+  <FaWhatsapp size={32} />
+</a>
+
 
             
 
