@@ -30,7 +30,7 @@ const LandingPage = () => {
   href="https://www.instagram.com/space_edge_interiors"
   target="_blank"
   rel="noopener noreferrer"
-  className="fixed right-4 top-[60%] md:top-[60%] transform -translate-y-1/2 bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 flex items-center gap-2"
+  className="fixed right-4 top-[70%] md:top-[70%] transform -translate-y-1/2 bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 flex items-center gap-2"
 >
   <FaInstagram size={32} />
 </a>
@@ -39,7 +39,7 @@ const LandingPage = () => {
   href="https://wa.me/919767787898"
   target="_blank"
   rel="noopener noreferrer"
-  className="fixed right-4 top-[50%] md:top-[50%] transform -translate-y-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg z-50 hover:bg-green-600 flex items-center gap-2"
+  className="fixed right-4 top-[85%] md:top-[85%] transform -translate-y-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg z-50 hover:bg-green-600 flex items-center gap-2"
 >
   <FaWhatsapp size={32} />
 </a>
