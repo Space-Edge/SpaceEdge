@@ -23,7 +23,7 @@ const LandingPage = () => {
             {/* This div will be fixed at the top right and adjust for mobile */}
             <div className="
         flex flex-col items-end space-y-2   // Default for mobile: column layout, align right, vertical spacing
-        sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0 // Small screens and up: row layout, center items, horizontal spacing, no vertical spacing
+        sm:flex-row sm:items-center sm:space-x-4 sm:space-y-4 // Small screens and up: row layout, center items, horizontal spacing, no vertical spacing
         fixed top-1 right-2                 // Default for mobile: fixed top-1, slightly less right margin
         sm:right-6                          // Small screens and up: fixed top-1, more right margin
         z-50
