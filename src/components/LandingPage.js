@@ -173,8 +173,8 @@ const LandingPage = () => {
                         <div className="mt-6 space-y-3">
                             <div className="flex items-center justify-center md:justify-start space-x-3">
                                 <FaEnvelope className="text-xl text-gray-400" />
-                                <a href="mailto:spaced9einteriors@gmail.com" className="text-white hover:underline">
-                                    spaced9einteriors@gmail.com
+                                <a href="mailto:shruti@spaceedgeinteriors.in " className="text-white hover:underline">
+                                    shruti@spaceedgeinteriors.in 
                                 </a>
                             </div>
                             <div className="flex items-center justify-center md:justify-start space-x-3">
