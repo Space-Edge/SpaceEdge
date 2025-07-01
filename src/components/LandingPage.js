@@ -17,35 +17,64 @@ const LandingPage = () => {
             {/* Navbar */}
             <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
                 <h1 className="text-xl font-bold">Space&Edge</h1>
+                {/* The navigation content that scrolls */}
+            </nav>
+
+            {/* This div will be fixed at the top right and adjust for mobile */}
+            <div className="
+        flex flex-col items-end space-y-2   // Default for mobile: column layout, align right, vertical spacing
+        sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0 // Small screens and up: row layout, center items, horizontal spacing, no vertical spacing
+        fixed top-1 right-2                 // Default for mobile: fixed top-1, slightly less right margin
+        sm:right-6                          // Small screens and up: fixed top-1, more right margin
+        z-50
+    ">
                 <a
                     href="https://docs.google.com/forms/d/e/1FAIpQLSeGAkkwrIDbsd2p5bLZkfqRaEbP--5tBYTyjMLtpr6QbpPsyQ/viewform?usp=header"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-black text-white px-4 py-2.5 rounded-lg font-semibold fixed top-1 right-6 z-50"
+                    className="
+                bg-black text-white
+                px-2 py-1.5 text-sm           // Default for mobile: smaller padding, smaller text
+                sm:px-4 sm:py-2.5 sm:text-base // Small screens and up: original padding, original text
+                rounded-lg font-semibold
+                whitespace-nowrap             // Prevent text from wrapping
+            "
                 >
                     Book Free Consulation
                 </a>
-            </nav>
-<a
-  href="https://www.instagram.com/space_edge_interiors"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="fixed right-4 top-[70%] md:top-[70%] transform -translate-y-1/2 bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 flex items-center gap-2"
->
-  <FaInstagram size={32} />
-</a>
+                <a
+                    href="tel:+919767787898"
+                    className="
+                bg-black text-white
+                px-2 py-1.5 text-sm           // Default for mobile: smaller padding, smaller text
+                sm:px-4 sm:py-2.5 sm:text-base // Small screens and up: original padding, original text
+                rounded-lg font-semibold
+                whitespace-nowrap             // Prevent text from wrapping
+            "
+                >
+                    📞 +91 9767787898
+                </a>
+            </div>
+            <a
+                href="https://www.instagram.com/space_edge_interiors"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fixed right-4 top-[70%] md:top-[70%] transform -translate-y-1/2 bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 flex items-center gap-2"
+            >
+                <FaInstagram size={32} />
+            </a>
 
-<a
-  href="https://wa.me/919767787898"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="fixed right-4 top-[82%] md:top-[82%] transform -translate-y-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg z-50 hover:bg-green-600 flex items-center gap-2"
->
-  <FaWhatsapp size={32} />
-</a>
+            <a
+                href="https://wa.me/919767787898"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fixed right-4 top-[82%] md:top-[82%] transform -translate-y-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg z-50 hover:bg-green-600 flex items-center gap-2"
+            >
+                <FaWhatsapp size={32} />
+            </a>
 
 
-            
+
 
             {/* Hero Section or Image Gallery */}
             {showGallery ? (
@@ -68,7 +97,7 @@ const LandingPage = () => {
                     <div className="absolute inset-0 flex flex-col justify-center items-center text-center">
                         <h2 className="text-6xl font-bold">Space&Edge</h2>
                         <p className="mt-4 max-w-4xl">
-                               Crafting spaces that harmonize modern aesthetics with timeless elegance.
+                            Crafting spaces that harmonize modern aesthetics with timeless elegance.
                         </p>
                         <button
                             className="mt-4 bg-black text-white px-6 py-2 rounded-lg"
