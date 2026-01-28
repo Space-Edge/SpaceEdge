@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livspace Flow</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom scrollbar for cleaner look if needed */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#B8860B', // brand-accent
+                        primaryLight: '#F5F5DC', // brand-text-light
+                        'brand-primary': '#4B3A26',
+                        'brand-secondary': '#7C5F4A',
+                        'brand-accent': '#B8860B',
+                        'brand-text-dark': '#1E1F1A',
+                        'brand-text-light': '#F5F5DC',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col text-gray-800">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white sticky top-0 z-50 shadow-sm md:shadow-none border-b border-gray-100">
+        <!-- Mobile Header -->
+        <div class="md:hidden flex items-center justify-between p-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Livspace_Logo_2020.svg" alt="Livspace"
+                class="h-6 object-contain" onerror="this.style.display='none'">
+            <span class="font-bold text-primary text-sm">Livspace</span>
+            <div class="text-gray-500 font-medium text-sm" id="mobile-step-counter">1/4</div>
+        </div>
+
+        <!-- Desktop Header -->
+        <div class="hidden md:flex items-center justify-between max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center gap-2">
+                <img src="./SElogo-removebg-preview.png" alt="logo" class="h-8 bg-black">
+                <!-- <span class="font-bold text-xl text-gray-800 tracking-tight">Livspace</span> -->
+            </div>
+            <span class="text-gray-500 font-medium" id="desktop-step-counter">1/4</span>
+        </div>
+
+        <!-- Stepper (Desktop) -->
+        <div class="w-full py-4 bg-white border-t border-gray-100 hidden md:block">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="flex items-center justify-between relative" id="desktop-stepper">
+                    <!-- Stepper injected via JS -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-lg mx-auto md:mt-8 md:mb-24 p-4 md:p-0" id="main-content">
+        <!-- Dynamic Content injected via JS -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 p-4 sticky bottom-0 z-40 md:fixed md:bottom-0 md:w-full">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <button id="btn-back" onclick="app.handleNavigation('back')"
+                class="px-6 py-2 text-sm font-bold text-gray-500 hover:text-gray-800 transition-colors uppercase tracking-wider disabled:text-gray-300 disabled:cursor-not-allowed">
+                BACK
+            </button>
+
+            <button id="btn-next" onclick="app.handleNavigation('next')"
+                class="px-10 py-3 rounded text-sm font-bold text-white shadow-lg shadow-amber-200 hover:shadow-amber-300 transition-all uppercase tracking-wider transform active:scale-95 bg-primary">
+                NEXT
+            </button>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- DATA & STATE ---
+        const INITIAL_SCHEMA = {
+            "pageConfig": { "title": "Livspace Flow", "currentStepIndex": 1, "totalSteps": 4 },
+            "header": {
+                "logo": { "alt": "Livspace", "src": "https://upload.wikimedia.org/wikipedia/commons/9/90/Livspace_Logo_2020.svg" },
+                "stepper": {
+                    "displayType": "horizontal",
+                    "steps": [
+                        { "id": "step_1", "label": "BHK TYPE", "status": "active", "isCompleted": false },
+                        { "id": "step_2", "label": "ROOMS TO DESIGN", "status": "pending", "isCompleted": false },
+                        { "id": "step_3", "label": "PACKAGE", "status": "pending", "isCompleted": false },
+                        { "id": "step_4", "label": "GET QUOTE", "status": "pending", "isCompleted": false }
+                    ]
+                },
+                "stepCounter": "1/4"
+            },
+            "content": {
+                "1": {
+                    "headline": "Select your BHK type",
+                    "subHeadline": { "text": "To know more about this, {link}", "linkText": "click here", "action": "open_modal_info" },
+                    "form": {
+                        "id": "bhk_selection_form", "type": "accordion_radio_group",
+                        "options": [
+                            { "id": "opt_1bhk", "value": "1_bhk", "label": "1 BHK", "isSelected": false, "isExpandable": false },
+                            { "id": "opt_2bhk", "value": "2_bhk", "label": "2 BHK", "isSelected": false, "isExpandable": true, "isExpanded": false, "nestedInput": { "type": "card_selection_grid", "name": "2bhk_size_variant", "options": [{ "id": "opt_2bhk_small", "value": "small", "label": "Small", "description": "Below 800 sq ft", "isSelected": true }, { "id": "opt_2bhk_large", "value": "large", "label": "Large", "description": "Above 800 sq ft", "isSelected": false }] } },
+                            { "id": "opt_3bhk", "value": "3_bhk", "label": "3 BHK", "isSelected": false, "isExpandable": true, "isExpanded": false, "nestedInput": { "type": "card_selection_grid", "name": "3bhk_size_variant", "options": [{ "id": "opt_3bhk_small", "value": "small", "label": "Small", "description": "Below 1200 sq ft", "isSelected": true }, { "id": "opt_3bhk_large", "value": "large", "label": "Large", "description": "Above 1200 sq ft", "isSelected": false }] } },
+                            { "id": "opt_4bhk", "value": "4_bhk", "label": "4 BHK", "isSelected": false, "isExpandable": true, "isExpanded": false, "nestedInput": { "type": "card_selection_grid", "name": "4bhk_size_variant", "options": [{ "id": "opt_4bhk_small", "value": "small", "label": "Small", "description": "Below 1600 sq ft", "isSelected": true }, { "id": "opt_4bhk_large", "value": "large", "label": "Large", "description": "Above 1600 sq ft", "isSelected": false }] } },
+                            { "id": "opt_5bhk", "value": "5_bhk_plus", "label": "5 BHK+", "isSelected": false, "isExpandable": false }
+                        ]
+                    }
+                },
+                "2": {
+                    "headline": "Select the rooms you’d like us to design",
+                    "subHeadline": { "text": "To know more about this, {link}", "linkText": "click here", "action": "open_modal_info" },
+                    "form": {
+                        "id": "room_selection_form", "type": "counter_grid", "maxCountPerItem": 2,
+                        "options": [
+                            { "id": "room_living", "value": "living_room", "label": "Living Room", "icon": "sofa", "count": 0 },
+                            { "id": "room_kitchen", "value": "kitchen", "label": "Kitchen", "icon": "utensils", "count": 0 },
+                            { "id": "room_bedroom", "value": "bedroom", "label": "Bedroom", "icon": "bed-double", "count": 0 },
+                            { "id": "room_bathroom", "value": "bathroom", "label": "Bathroom", "icon": "bath", "count": 0 },
+                            { "id": "room_dining", "value": "dining", "label": "Dining", "icon": "briefcase", "count": 0 }
+                        ]
+                    }
+                },
+                "3": {
+                    "headline": "Select your package",
+                    "subHeadline": { "text": "Choose the package that best suits your needs", "linkText": "", "action": "" },
+                    "form": {
+                        "id": "package_selection_form", "type": "package_cards_list",
+                        "options": [
+                            { "id": "pkg_essentials", "value": "essentials", "label": "Essentials", "description": "A functional range of affordable modular solutions", "icon": "star", "image": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80", "features": ["Essential modular kitchen & wardrobe", "Basic electrical & plumbing work", "Standard finish laminates"], "isSelected": false },
+                            { "id": "pkg_premium", "value": "premium", "label": "Premium", "description": "Superior finish modular solutions & on-site services", "icon": "shield", "image": "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?auto=format&fit=crop&w=600&q=80", "features": ["Premium modular kitchen & wardrobe", "False ceiling & wall treatments", "High-gloss/Acrylic finishes"], "isSelected": false },
+                            { "id": "pkg_luxe", "value": "luxe", "label": "Luxe", "description": "High-end luxurious interiors with top-notch finishes", "icon": "gem", "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=80", "features": ["Luxury modular solutions", "End-to-end civil work & automation", "Premium PU/Veneer finishes"], "isSelected": false }
+                        ]
+                    }
+                },
+                "4": {
+                    "headline": "Your estimate is almost ready!",
+                    "subHeadline": { "text": "Share your details to get the quote", "linkText": "", "action": "" },
+                    "form": {
+                        "id": "lead_capture_form", "type": "input_group",
+                        "fields": [
+                            { "id": "field_name", "type": "text", "label": "Name", "placeholder": "Enter your name", "icon": "user", "value": "" },
+                            { "id": "field_email", "type": "email", "label": "Email ID", "placeholder": "Enter your email", "icon": "mail", "value": "" },
+                            { "id": "field_phone", "type": "tel", "label": "Phone Number", "placeholder": "Enter your phone number", "icon": "phone", "value": "" },
+                            { "id": "field_floor_plan", "type": "text", "label": "Floor plan (optional)", "placeholder": "Link to floor plan or description", "icon": "map", "value": "" },
+                            { "id": "field_idea", "type": "textarea", "label": "Give us your idea", "placeholder": "Tell us about your dream home...", "icon": "lightbulb", "value": "" }
+                        ],
+                        "whatsappOptIn": false
+                    }
+                }
+            }
+        };
+
+        // Deep copy helper for initialization
+        const state = {
+            schema: JSON.parse(JSON.stringify(INITIAL_SCHEMA)),
+            formData: {},
+            whatsappOptIn: true
+        };
+
+        // --- GLOBAL APP LOGIC ---
+        const app = {
+            init: () => {
+                app.render();
+            },
+
+            // --- ACTIONS ---
+
+            handleNavigation: (direction) => {
+                const config = state.schema.pageConfig;
+                const header = state.schema.header;
+                let newIndex = config.currentStepIndex;
+
+                // If on step 4 and clicking next, submit the form
+                if (direction === 'next' && newIndex === 4) {
+                    app.submitForm();
+                    return;
+                }
+
+                if (direction === 'next' && newIndex < config.totalSteps) newIndex++;
+                else if (direction === 'back' && newIndex > 1) newIndex--;
+                else return; // Boundary check
+
+                // Update Stepper Logic
+                config.currentStepIndex = newIndex;
+                header.stepper.steps.forEach((step, idx) => {
+                    const stepNum = idx + 1;
+                    if (stepNum < newIndex) { step.status = 'completed'; step.isCompleted = true; }
+                    else if (stepNum === newIndex) { step.status = 'active'; step.isCompleted = false; }
+                    else { step.status = 'pending'; step.isCompleted = false; }
+                });
+                header.stepCounter = `${newIndex}/${config.totalSteps}`;
+
+                app.render();
+            },
+
+            submitForm: async () => {
+                // Collect all form data
+                const formData = new FormData();
+
+                // Step 1: BHK Selection
+                const bhkOption = state.schema.content["1"].form.options.find(opt => opt.isSelected);
+                if (bhkOption) {
+                    formData.append('bhk_type', bhkOption.label);
+                    if (bhkOption.nestedInput && bhkOption.isExpanded) {
+                        const sizeVariant = bhkOption.nestedInput.options.find(opt => opt.isSelected);
+                        if (sizeVariant) {
+                            formData.append('bhk_size', `${sizeVariant.label} (${sizeVariant.description})`);
+                        }
+                    }
+                }
+
+                // Step 2: Rooms Selection
+                const rooms = state.schema.content["2"].form.options
+                    .filter(opt => opt.count > 0)
+                    .map(opt => `${opt.label}: ${opt.count}`)
+                    .join(', ');
+                formData.append('rooms', rooms || 'None selected');
+
+                // Step 3: Package Selection
+                const packageOption = state.schema.content["3"].form.options.find(opt => opt.isSelected);
+                if (packageOption) {
+                    formData.append('package', packageOption.label);
+                    formData.append('package_description', packageOption.description);
+                }
+
+                // Step 4: Contact Details
+                formData.append('name', state.formData['field_name'] || '');
+                formData.append('email', state.formData['field_email'] || '');
+                formData.append('phone', state.formData['field_phone'] || '');
+                formData.append('floor_plan', state.formData['field_floor_plan'] || '');
+                formData.append('idea', state.formData['field_idea'] || '');
+                formData.append('whatsapp_optin', state.whatsappOptIn ? 'Yes' : 'No');
+
+                // Disable button and show loading
+                const nextBtn = document.getElementById('btn-next');
+                const originalText = nextBtn.innerText;
+                nextBtn.disabled = true;
+                nextBtn.innerText = 'SENDING...';
+
+                try {
+                    const response = await fetch('contact.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        alert('✅ Quote request sent successfully! We will contact you soon.');
+                        // Reset form or redirect
+                        window.location.reload();
+                    } else {
+                        alert('❌ ' + result.message);
+                        nextBtn.disabled = false;
+                        nextBtn.innerText = originalText;
+                    }
+                } catch (error) {
+                    alert('❌ An error occurred. Please try again.');
+                    nextBtn.disabled = false;
+                    nextBtn.innerText = originalText;
+                }
+            },
+
+            handleBHKSelect: (optionId) => {
+                const options = state.schema.content["1"].form.options;
+                options.forEach(opt => {
+                    if (opt.id === optionId) {
+                        opt.isSelected = true;
+                        opt.isExpanded = opt.isExpandable;
+                    } else {
+                        opt.isSelected = false;
+                        opt.isExpanded = false;
+                    }
+                });
+                app.render();
+            },
+
+            handleNestedOptionSelect: (parentOptionId, nestedOptionId) => {
+                const parent = state.schema.content["1"].form.options.find(o => o.id === parentOptionId);
+                if (parent && parent.nestedInput) {
+                    parent.nestedInput.options.forEach(opt => {
+                        opt.isSelected = (opt.id === nestedOptionId);
+                    });
+                }
+                app.render();
+            },
+
+            handleRoomCountChange: (optionId, delta) => {
+                const form = state.schema.content["2"].form;
+                const option = form.options.find(o => o.id === optionId);
+                if (option) {
+                    const newCount = option.count + delta;
+                    if (newCount >= 0 && newCount <= form.maxCountPerItem) {
+                        option.count = newCount;
+                        app.render();
+                    }
+                }
+            },
+
+            handlePackageSelect: (optionId) => {
+                const options = state.schema.content["3"].form.options;
+                options.forEach(opt => {
+                    opt.isSelected = (opt.id === optionId);
+                });
+                app.render();
+            },
+
+            handleInputChange: (e) => {
+                state.formData[e.target.name] = e.target.value;
+            },
+
+            toggleWhatsapp: () => {
+                state.whatsappOptIn = !state.whatsappOptIn;
+                app.render();
+            },
+
+            // --- RENDERERS ---
+
+            render: () => {
+                const currentStep = state.schema.pageConfig.currentStepIndex;
+
+                // 1. Update Header Counters
+                document.getElementById('mobile-step-counter').innerText = state.schema.header.stepCounter;
+                document.getElementById('desktop-step-counter').innerText = state.schema.header.stepCounter;
+
+                // 2. Render Stepper
+                document.getElementById('desktop-stepper').innerHTML = app.renderStepperHTML();
+
+                // 3. Render Main Content
+                const contentData = state.schema.content[currentStep];
+                const contentContainer = document.getElementById('main-content');
+
+                let contentHTML = `
+                    <div class="text-center mb-8">
+                        <h1 class="text-2xl font-bold text-gray-900 mb-2">${contentData.headline}</h1>
+                        <p class="text-sm text-gray-500">
+                            ${contentData.subHeadline.text.split('{link}')[0]}
+                            ${contentData.subHeadline.linkText ? `<button class="text-primary font-semibold hover:underline ml-1">${contentData.subHeadline.linkText}</button>` : ''}
+                        </p>
+                    </div>
+                `;
+
+                if (currentStep === 1) contentHTML += app.renderStep1(contentData.form);
+                else if (currentStep === 2) contentHTML += app.renderStep2(contentData.form);
+                else if (currentStep === 3) contentHTML += app.renderStep3(contentData.form);
+                else if (currentStep === 4) contentHTML += app.renderStep4(contentData.form);
+
+                contentContainer.innerHTML = contentHTML;
+
+                // 4. Update Footer Buttons
+                const backBtn = document.getElementById('btn-back');
+                const nextBtn = document.getElementById('btn-next');
+
+                backBtn.disabled = (currentStep === 1);
+                if (currentStep === 1) backBtn.classList.add('text-gray-300', 'cursor-not-allowed');
+                else backBtn.classList.remove('text-gray-300', 'cursor-not-allowed');
+
+                nextBtn.innerText = (currentStep === 4) ? "GET QUOTE" : "NEXT";
+
+                // 5. Initialize Icons
+                lucide.createIcons();
+            },
+
+            renderStepperHTML: () => {
+                const steps = state.schema.header.stepper.steps;
+                let html = `<div class="absolute top-3 left-0 w-full h-0.5 bg-gray-200 -z-10"></div>`;
+
+                steps.forEach((step, idx) => {
+                    const isActive = step.status === 'active';
+                    const isCompleted = step.isCompleted;
+                    const bgClass = (isActive || isCompleted) ? 'border-primary bg-primary text-white' : 'border-gray-300 bg-white text-gray-400';
+                    const textClass = isActive ? 'text-gray-800' : 'text-gray-400';
+                    const content = isCompleted ? `<i data-lucide="check" width="14" height="14"></i>` : (idx + 1);
+
+                    html += `
+                        <div class="flex flex-col items-center bg-white px-2">
+                            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors duration-200 ${bgClass}">
+                                ${content}
+                            </div>
+                            <span class="mt-2 text-[10px] tracking-wider font-semibold ${textClass}">${step.label}</span>
+                        </div>
+                    `;
+                });
+                return html;
+            },
+
+            renderStep1: (form) => {
+                return `
+                <div class="bg-white md:rounded-xl md:shadow-sm md:border md:border-gray-100 overflow-hidden">
+                    ${form.options.map((opt, idx) => {
+                    const isLast = idx === form.options.length - 1;
+                    const borderClass = !isLast ? 'border-b border-gray-100' : '';
+                    const bgClass = opt.isSelected ? 'bg-primaryLight bg-opacity-30' : '';
+                    const textClass = opt.isSelected ? 'text-gray-900' : 'text-gray-600';
+                    const circleClass = opt.isSelected ? 'border-primary' : 'border-gray-300';
+                    const dot = opt.isSelected ? `<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>` : '';
+
+                    let nestedHTML = '';
+                    if (opt.nestedInput && opt.isExpanded) {
+                        nestedHTML = `
+                                <div class="p-4 bg-gray-50 border-t border-gray-100">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        ${opt.nestedInput.options.map(nOpt => `
+                                            <div onclick="event.stopPropagation(); app.handleNestedOptionSelect('${opt.id}', '${nOpt.id}')"
+                                                 class="cursor-pointer p-4 rounded-lg border-2 text-center transition-all duration-200 bg-white ${nOpt.isSelected ? 'border-primary shadow-sm' : 'border-gray-200 hover:border-gray-300'}">
+                                                <div class="font-bold text-sm mb-1 ${nOpt.isSelected ? 'text-primary' : 'text-gray-700'}">${nOpt.label}</div>
+                                                <div class="text-xs text-gray-500">${nOpt.description}</div>
+                                                ${nOpt.isSelected ? `<div class="mt-2 flex justify-center text-primary"><div class="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center"><i data-lucide="check" width="12"></i></div></div>` : ''}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                    }
+
+                    return `
+                            <div class="flex flex-col ${borderClass}">
+                                <div onclick="app.handleBHKSelect('${opt.id}')" 
+                                     class="relative flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition-colors ${bgClass}">
+                                    <span class="font-semibold text-base ${textClass}">${opt.label}</span>
+                                    <div class="w-5 h-5 rounded-full border flex items-center justify-center ${circleClass}">
+                                        ${dot}
+                                    </div>
+                                </div>
+                                ${nestedHTML}
+                            </div>
+                        `;
+                }).join('')}
+                </div>`;
+            },
+
+            renderStep2: (form) => {
+                return `
+                <div class="pb-10">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        ${form.options.map(opt => {
+                    const isActive = opt.count > 0;
+                    const borderClass = isActive ? 'border-primary bg-white shadow-sm' : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-md';
+                    const iconClass = isActive ? 'text-primary' : 'text-gray-400';
+                    const textClass = isActive ? 'text-gray-900' : 'text-gray-600';
+                    const minusDisabled = opt.count === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-primary font-bold shadow-sm hover:bg-white';
+                    const plusDisabled = opt.count >= form.maxCountPerItem ? 'text-gray-300 cursor-not-allowed' : 'text-primary font-bold shadow-sm hover:bg-white';
+
+                    return `
+                                <div class="relative rounded-xl p-4 flex flex-col items-center justify-center text-center transition-all duration-200 border-2 ${borderClass}">
+                                    <div class="mb-3 ${iconClass}">
+                                        <i data-lucide="${opt.icon}" width="28" height="28"></i>
+                                    </div>
+                                    <span class="font-semibold text-sm mb-4 ${textClass}">${opt.label}</span>
+                                    <div class="flex items-center gap-3 bg-gray-50 rounded-full px-2 py-1 border border-gray-200">
+                                        <button onclick="event.stopPropagation(); app.handleRoomCountChange('${opt.id}', -1)" class="w-6 h-6 flex items-center justify-center rounded-full transition-colors ${minusDisabled}" ${opt.count === 0 ? 'disabled' : ''}>
+                                            <i data-lucide="minus" width="14"></i>
+                                        </button>
+                                        <span class="w-4 text-center font-bold text-gray-800 text-sm">${opt.count}</span>
+                                        <button onclick="event.stopPropagation(); app.handleRoomCountChange('${opt.id}', 1)" class="w-6 h-6 flex items-center justify-center rounded-full transition-colors ${plusDisabled}" ${opt.count >= form.maxCountPerItem ? 'disabled' : ''}>
+                                            <i data-lucide="plus" width="14"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                }).join('')}
+                    </div>
+                </div>`;
+            },
+
+            renderStep3: (form) => {
+                return `
+                <div class="space-y-4 pb-10">
+                    ${form.options.map(opt => {
+                    const borderClass = opt.isSelected ? 'border-primary bg-primaryLight bg-opacity-10 shadow-md' : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm';
+                    const iconBg = opt.isSelected ? 'bg-primaryLight text-primary' : 'bg-gray-100 text-gray-500';
+                    const titleClass = opt.isSelected ? 'text-gray-900' : 'text-gray-700';
+                    const checkCircle = opt.isSelected ? 'border-primary bg-primary' : 'border-gray-300 bg-white';
+
+                    return `
+                            <div onclick="app.handlePackageSelect('${opt.id}')"
+                                 class="relative rounded-xl border-2 p-5 cursor-pointer transition-all duration-200 overflow-hidden ${borderClass}">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex items-center gap-4 mb-3 w-full">
+                                        <div class="p-2 rounded-full flex-shrink-0 ${iconBg}">
+                                            <i data-lucide="${opt.icon}" width="24"></i>
+                                        </div>
+                                        <div class="w-full pr-8">
+                                            <h3 class="font-bold text-lg ${titleClass}">${opt.label}</h3>
+                                            <div class="w-full my-3">
+                                                <img src="${opt.image}" alt="${opt.label}" class="w-full h-40 object-cover rounded-lg shadow-sm">
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-2">${opt.description}</p>
+                                        </div>
+                                    </div>
+                                    <div class="absolute top-5 right-5 w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${checkCircle}">
+                                        ${opt.isSelected ? '<i data-lucide="check" class="text-white" width="14"></i>' : ''}
+                                    </div>
+                                </div>
+                                <div class="pl-14">
+                                    <ul class="space-y-2">
+                                        ${opt.features.map(feat => `
+                                            <li class="flex items-center text-sm text-gray-600">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-gray-300 mr-2 flex-shrink-0"></span>
+                                                ${feat}
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        `;
+                }).join('')}
+                </div>`;
+            },
+
+            renderStep4: (form) => {
+                const waSelected = state.whatsappOptIn;
+                const waBoxClass = waSelected ? 'bg-[#25D366] border-[#25D366]' : 'bg-white border-gray-300';
+
+                return `
+                <div class="pb-10">
+                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                        <div class="space-y-4">
+                            ${form.fields.map(field => {
+                    const inputHTML = field.type === 'textarea'
+                        ? `<textarea name="${field.id}" placeholder="${field.placeholder}" 
+                                            oninput="app.handleInputChange(event)"
+                                            class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all h-32 resize-none">${state.formData[field.id] || ''}</textarea>`
+                        : `<input type="${field.type}" name="${field.id}" placeholder="${field.placeholder}" value="${state.formData[field.id] || ''}"
+                                           oninput="app.handleInputChange(event)"
+                                           class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">`;
+
+                    return `
+                                <div class="relative">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">${field.label}</label>
+                                    <div class="relative">
+                                        <div class="absolute top-3 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                            <i data-lucide="${field.icon}" width="20"></i>
+                                        </div>
+                                        ${inputHTML}
+                                    </div>
+                                </div>
+                            `;
+                }).join('')}
+                        </div>
+                    </div>
+                </div>`;
+            }
+        };
+
+        // Initialize App on Load
+        window.onload = app.init;
+    </script>
+</body>
+
+</html>
